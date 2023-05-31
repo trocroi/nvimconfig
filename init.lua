@@ -1,13 +1,17 @@
--- [[
+  -- [[
 -- this is best practice for a block comment
 -- first init action is to set the global and local leaders
 -- ]]
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
+-- disable netrw at the very start of your init.lua for NvimTree
+vim.g.loaded_netrw = 1
+vim.g.loaded_netrwPlugin = 1
+
 -- Install package manager
---    https://github.com/folke/lazy.nvim
---    `:help lazy.nvim.txt` for more info
+  -- https://github.com/folke/lazy.nvim
+  -- `:help lazy.nvim.txt` for more info
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
 
 if not vim.loop.fs_stat(lazypath) then
@@ -51,6 +55,8 @@ require('lazy').setup({
   'jremmen/vim-ripgrep',
   -- Detect tabstop and shiftwidth automatically
   'tpope/vim-sleuth',
+  -- autopairs braces etc
+  {"windwp/nvim-autopairs", opts = {} },
 
   -- NOTE: This is where your plugins related to LSP can be installed.
   --  The configuration is done below. Search for lspconfig to find it below.
@@ -70,7 +76,7 @@ require('lazy').setup({
       'folke/neodev.nvim',
     },
   },
-
+  --
   {
     -- Autocompletion
     'hrsh7th/nvim-cmp',
@@ -89,8 +95,9 @@ require('lazy').setup({
 
   -- Useful plugin to show you pending keybinds.
   { 'folke/which-key.nvim', opts = {} },
+
+  -- GitSigns adds git stuff to the gutter
   {
-    -- Adds git releated signs to the gutter, as well as utilities for managing changes
     'lewis6991/gitsigns.nvim',
     opts = {
       -- See `:help gitsigns.txt`
@@ -109,69 +116,82 @@ require('lazy').setup({
     },
   },
 
-  -- color schemes
-  {
-    'navarasu/onedark.nvim',
-    opts = {
-      italic_comments = false,
-    }
-  },
-  {
-    'folke/tokyonight.nvim',
-    opts = {
-      italic_comments = false,
-    }
-  },
+  -- color schemes and pretty things ----------------------------
+  -- {
+  --   'navarasu/onedark.nvim',
+  --   opts = {
+  --     italic_comments = false,
+  --   }
+  -- },
+  -- {
+  --   'folke/tokyonight.nvim',
+  --   opts = {
+  --     italic_comments = false,
+  --   }
+  -- },
   {'morhetz/gruvbox'},
+
   {
-    'Mofiqul/vscode.nvim',
+    'mofiqul/vscode.nvim',
     opts = {
       italic_comments = false,
     }
   },
+
   {
-    -- Set lualine as statusline
+    -- set lualine as statusline
     'nvim-lualine/lualine.nvim',
     opts = {
       options = {
-        icons_enabled = true,
-        theme = 'vscode',
-        component_separators = '|',
-        section_separators = '',
         disabled_filetypes = {
-          statusline = {'NvimTree'}
+          statusline = {'nvimtree'}
         }
       },
     },
   },
 
   {
-    -- Add indentation guides even on blank lines
+    -- add indentation guides even on blank lines
     'lukas-reineke/indent-blankline.nvim',
-    -- Enable `lukas-reineke/indent-blankline.nvim`
-    -- See `:help indent_blankline.txt`
-    opts = {
+    -- enable `lukas-reineke/indent-blankline.nvim`
+    -- see `:help indent_blankline.txt`
+     opts = {
        char = '┊', -- try '|' as well or other vertical bars like from !tree
-       show_trailing_blankline_indent = true,
+       show_trailing_blankline_indent = false,
        show_first_indent_level = false,
        use_treesitter = true,
-       show_current_context = false,
+       show_current_context = true,
     },
   },
 
-  -- "gc" to comment visual regions/lines
-  { 'numToStr/Comment.nvim', opts = {} },
+  -- to comment visual regions/lines
+  { 'numtostr/comment.nvim',
+    opts = {
+      -- LHS of operator-pending mappings in NORMAL and VISUAL mode
+      opleader = {
+        -- Line-comment keymap
+        line = '<leader>cl',
+        -- Block-comment keymap
+        block = '<leader>cb',
+      },
+    }
+  },
 
-  -- Fuzzy Finder (files, lsp, etc)
+  { 'nvim-tree/nvim-tree.lua',
+    dependencies = { 'nvim-tree/nvim-web-devicons' },
+    opts = {}
+  },
+
+  -- fuzzy finder (files, lsp, etc)
   { 'nvim-telescope/telescope.nvim', branch = '0.1.x', dependencies = { 'nvim-lua/plenary.nvim' } },
 
-  -- Fuzzy Finder Algorithm which requires local dependencies to be built.
-  -- Only load if `make` is available. Make sure you have the system
+  -- fuzzy finder algorithm which requires local dependencies to be built.
+  -- only load if `make` is available. make sure you have the system
   -- requirements installed.
   {
     'nvim-telescope/telescope-fzf-native.nvim',
-    -- NOTE: If you are having trouble with this installation,
-    --       refer to the README for telescope-fzf-native for more instructions.
+    -- note: if you are having trouble with this installation,
+    --       refer to the readme for telescope-fzf-native for more instructions.
     build = 'make',
     cond = function()
       return vim.fn.executable 'make' == 1
@@ -179,35 +199,35 @@ require('lazy').setup({
   },
 
   {
-    -- Highlight, edit, and navigate code
+    -- highlight, edit, and navigate code
     'nvim-treesitter/nvim-treesitter',
     dependencies = {
       'nvim-treesitter/nvim-treesitter-textobjects',
     },
-    build = ':TSUpdate',
+    build = ':tsupdate',
   },
 
-  -- NOTE: Next Step on Your Neovim Journey: Add/Configure additional "plugins" for kickstart
-  --       These are some example plugins that I've included in the kickstart repository.
-  --       Uncomment any of the lines below to enable them.
+  -- note: next step on your neovim journey: add/configure additional "plugins" for kickstart
+  --       these are some example plugins that i've included in the kickstart repository.
+  --       uncomment any of the lines below to enable them.
   -- require 'kickstart.plugins.autoformat',
   -- require 'kickstart.plugins.debug',
 
-  -- NOTE: The import below automatically adds your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
-  --    You can use this folder to prevent any conflicts with this init.lua if you're interested in keeping
+  -- note: the import below automatically adds your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
+  --    you can use this folder to prevent any conflicts with this init.lua if you're interested in keeping
   --    up-to-date with whatever is in the kickstart repo.
   --
-  --    For additional information see: https://github.com/folke/lazy.nvim#-structuring-your-plugins
+  --    for additional information see: https://github.com/folke/lazy.nvim#-structuring-your-plugins
   -- { import = 'custom.plugins' },
 }, {})
 
 
--- [[ Setting options ]]
--- See `:help vim.o`
--- NOTE: You can change these options as you wish!
+-- [[ setting options ]]
+-- see `:help vim.o`
+-- note: you can change these options as you wish!
 
 -- first, set color scheme because color is the most important lol
-vim.cmd.colorscheme("vscode")
+vim.cmd.colorscheme('gruvbox') -- ("vscode")
 -- default tablstop and shiftwidth to 4
 vim.opt.tabstop = 4
 vim.opt.shiftwidth = 4
@@ -219,13 +239,12 @@ vim.opt.autoindent = true
 vim.opt.smartindent = true
 -- show whitespace as 'middot' char
 vim.opt.listchars:append({ space = '·' })
--- actually show that shit
 vim.opt.list = true
 vim.opt.syntax = 'on'
 -- word wrap for narrow panes/windows/buffers
 vim.opt.wrap = true
 -- the number of lines _below_ the cursor to keep when scrolling to top or bottom of buffer
-vim.opt.scrolloff = 10
+vim.opt.scrolloff = 8
 -- show the cursor's line and column
 vim.opt.cursorline = true
 vim.opt.cursorcolumn = true
@@ -241,7 +260,7 @@ vim.o.hlsearch = true
 -- bind <ESC> to `:noh` to clear search highlight "nnoremap <esc> :noh<return><esc>"
 vim.api.nvim_set_keymap('n', '<esc>', ":noh<return><esc>", { noremap = true, silent=true })
 
--- Make line numbers default
+-- Show line numbers default
 vim.wo.number = true
 
 -- Enable mouse mode
@@ -307,29 +326,59 @@ require('telescope').setup {
         ['<C-d>'] = false,
       },
     },
+    layout_config = {
+      horizontal = {
+        width = 0.95,
+        height = 0.95,
+        prompt_position = 'top'
+      }
+    }
   },
+  pickers = {
+    colorscheme = {
+        enable_preview = true
+    },
+    oldfiles = {
+        layout_strategy = 'bottom_pane'
+    },
+    buffers = {
+        layout_strategy = 'bottom_pane',
+        previewer = false
+    },
+    live_grep = {
+        layout_strategy = 'bottom_pane',
+    },
+    find_files = {
+        layout_strategy = 'center',
+        previewer = false,
+        layout_config = {
+          prompt_position = 'top',
+        }
+    }
+  }
 }
 
 -- Enable telescope fzf native, if installed
 pcall(require('telescope').load_extension, 'fzf')
 
+-- Some Telescope keymaps
+local tscope = require('telescope.builtin')
+local TSthemes = require('telescope.themes')
 -- See `:help telescope.builtin`
-vim.keymap.set('n', '<leader>fo', require('telescope.builtin').oldfiles, { desc = '[?] Find recently opened files' })
-vim.keymap.set('n', '<leader><space>', require('telescope.builtin').buffers, { desc = '[ ] Find existing buffers' })
+vim.keymap.set('n', '<leader><space>', tscope.buffers, { desc = 'List currently open buffers' })
+vim.keymap.set('n', '<leader>th', tscope.colorscheme, { desc = 'Select color scheme with preview'})
+vim.keymap.set('n', '<leader>fo', tscope.oldfiles, { desc = 'Telescope [F]ind recently [O]pen files'})
+-- vim.keymap.set('n', '<leader>fg', tscope.git_files, { desc = 'Search [F]iles tracked by [G]it' })
+vim.keymap.set('n', '<leader>ff', tscope.find_files, { desc = 'fuck me'})
+vim.keymap.set('n', '<leader>fl', tscope.live_grep, { desc = '[F]ind [L]ive grep search term in workspace' })
+
 vim.keymap.set('n', '<leader>/', function()
   -- You can pass additional configuration to telescope to change theme, layout, etc.
-  require('telescope.builtin').current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
-    winblend = 2,
-    previewer = false,
-  })
+  -- tscope.current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
+  local fuzopts = { previewer = true }
+  tscope.current_buffer_fuzzy_find(TSthemes.get_ivy(fuzopts))
 end, { desc = '[/] Fuzzily search in current buffer' })
 
-vim.keymap.set('n', '<leader>gf', require('telescope.builtin').git_files, { desc = 'Search [G]it [F]iles' })
-vim.keymap.set('n', '<leader>sf', require('telescope.builtin').find_files, { desc = '[S]earch [F]iles' })
-vim.keymap.set('n', '<leader>sh', require('telescope.builtin').help_tags, { desc = '[S]earch [H]elp' })
-vim.keymap.set('n', '<leader>sw', require('telescope.builtin').grep_string, { desc = '[S]earch current [W]ord' })
-vim.keymap.set('n', '<leader>sg', require('telescope.builtin').live_grep, { desc = '[S]earch by [G]rep' })
-vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { desc = '[S]earch [D]iagnostics' })
 
 -- [[ Configure Treesitter ]]
 -- See `:help nvim-treesitter`
