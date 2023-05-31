@@ -1,4 +1,4 @@
-  -- [[
+-- [[
 -- this is best practice for a block comment
 -- first init action is to set the global and local leaders
 -- ]]
@@ -336,24 +336,37 @@ require('telescope').setup {
   },
   pickers = {
     colorscheme = {
-        enable_preview = true
+      enable_preview = true
     },
     oldfiles = {
-        layout_strategy = 'bottom_pane'
+      layout_strategy = 'center',
+      previewer = false,
+      layout_config = {
+        anchor = 'N'
+      }
     },
     buffers = {
-        layout_strategy = 'bottom_pane',
-        previewer = false
+      layout_strategy = 'center',
+      previewer = false,
+      layout_config = {
+        anchor = 'N'
+      }
     },
-    live_grep = {
-        layout_strategy = 'bottom_pane',
-    },
+    live_grep = {},
     find_files = {
-        layout_strategy = 'center',
-        previewer = false,
-        layout_config = {
-          prompt_position = 'top',
-        }
+      layout_strategy = 'center',
+      previewer = false,
+      layout_config = {
+        anchor = 'N'
+      },
+    },
+    current_buffer_fuzzy_find = {
+      layout_strategy = 'bottom_pane',
+      previewer = true,
+      layout_config = {
+        height = 0.5,
+        prompt_position = 'top'
+      }
     }
   }
 }
@@ -361,24 +374,15 @@ require('telescope').setup {
 -- Enable telescope fzf native, if installed
 pcall(require('telescope').load_extension, 'fzf')
 
--- Some Telescope keymaps
+-- Telescope keymaps
 local tscope = require('telescope.builtin')
-local TSthemes = require('telescope.themes')
--- See `:help telescope.builtin`
 vim.keymap.set('n', '<leader><space>', tscope.buffers, { desc = 'List currently open buffers' })
 vim.keymap.set('n', '<leader>th', tscope.colorscheme, { desc = 'Select color scheme with preview'})
 vim.keymap.set('n', '<leader>fo', tscope.oldfiles, { desc = 'Telescope [F]ind recently [O]pen files'})
 -- vim.keymap.set('n', '<leader>fg', tscope.git_files, { desc = 'Search [F]iles tracked by [G]it' })
-vim.keymap.set('n', '<leader>ff', tscope.find_files, { desc = 'fuck me'})
+vim.keymap.set('n', '<leader>ff', tscope.find_files, { desc = '[F]ind [F]iles in cwd'})
 vim.keymap.set('n', '<leader>fl', tscope.live_grep, { desc = '[F]ind [L]ive grep search term in workspace' })
-
-vim.keymap.set('n', '<leader>/', function()
-  -- You can pass additional configuration to telescope to change theme, layout, etc.
-  -- tscope.current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
-  local fuzopts = { previewer = true }
-  tscope.current_buffer_fuzzy_find(TSthemes.get_ivy(fuzopts))
-end, { desc = '[/] Fuzzily search in current buffer' })
-
+vim.keymap.set('n', '<leader>/', tscope.current_buffer_fuzzy_find, { desc = '[/] fuzzy find in current buffer'})
 
 -- [[ Configure Treesitter ]]
 -- See `:help nvim-treesitter`
@@ -399,57 +403,57 @@ require('nvim-treesitter.configs').setup {
       node_decremental = '<M-space>',
     },
   },
-  textobjects = {
-    select = {
-      enable = true,
-      lookahead = true, -- Automatically jump forward to textobj, similar to targets.vim
-      keymaps = {
-        -- You can use the capture groups defined in textobjects.scm
-        ['aa'] = '@parameter.outer',
-        ['ia'] = '@parameter.inner',
-        ['af'] = '@function.outer',
-        ['if'] = '@function.inner',
-        ['ac'] = '@class.outer',
-        ['ic'] = '@class.inner',
-      },
-    },
-    move = {
-      enable = true,
-      set_jumps = true, -- whether to set jumps in the jumplist
-      goto_next_start = {
-        [']m'] = '@function.outer',
-        [']]'] = '@class.outer',
-      },
-      goto_next_end = {
-        [']M'] = '@function.outer',
-        [']['] = '@class.outer',
-      },
-      goto_previous_start = {
-        ['[m'] = '@function.outer',
-        ['[['] = '@class.outer',
-      },
-      goto_previous_end = {
-        ['[M'] = '@function.outer',
-        ['[]'] = '@class.outer',
-      },
-    },
-    swap = {
-      enable = true,
-      swap_next = {
-        ['<leader>a'] = '@parameter.inner',
-      },
-      swap_previous = {
-        ['<leader>A'] = '@parameter.inner',
-      },
-    },
-  },
+  -- textobjects = {
+  --   select = {
+  --         enable = true,
+  --     lookahead = true, -- Automatically jump forward to textobj, similar to targets.vim
+      -- keymaps = {
+      --   -- You can use the capture groups defined in textobjects.scm
+      --   ['aa'] = '@parameter.outer',
+      --   ['ia'] = '@parameter.inner',
+      --   ['af'] = '@function.outer',
+      --   ['if'] = '@function.inner',
+      --   ['ac'] = '@class.outer',
+      --   ['ic'] = '@class.inner',
+      -- },
+    -- },
+    -- -- move = {
+    --   enable = true,
+    --   set_jumps = true, -- whether to set jumps in the jumplist
+    --   goto_next_start = {
+    --     [']m'] = '@function.outer',
+    --     [']]'] = '@class.outer',
+    --   },
+    --   goto_next_end = {
+    --     [']M'] = '@function.outer',
+    --     [']['] = '@class.outer',
+    --   },
+    --   goto_previous_start = {
+    --     ['[m'] = '@function.outer',
+    --     ['[['] = '@class.outer',
+    --   },
+    --   goto_previous_end = {
+    --     ['[M'] = '@function.outer',
+    --     ['[]'] = '@class.outer',
+    --   },
+    -- },
+    -- swap = {
+    --   enable = true,
+    --   swap_next = {
+    --     ['<leader>a'] = '@parameter.inner',
+    --   },
+    --   swap_previous = {
+    --     ['<leader>A'] = '@parameter.inner',
+    --   },
+    -- },
+--   },
 }
 
 -- Diagnostic keymaps
-vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous diagnostic message' })
-vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next diagnostic message' })
-vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Open floating diagnostic message' })
-vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostics list' })
+-- vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous diagnostic message' })
+-- vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next diagnostic message' })
+-- vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Open floating diagnostic message' })
+-- vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostics list' })
 
 -- [[ Configure LSP ]]
 --  This function gets run when an LSP connects to a particular buffer.
@@ -468,8 +472,8 @@ local on_attach = function(_, bufnr)
     vim.keymap.set('n', keys, func, { buffer = bufnr, desc = desc })
   end
 
-  nmap('<leader>rn', vim.lsp.buf.rename, '[R]e[n]ame')
-  nmap('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction')
+  nmap('<leader>lr', vim.lsp.buf.rename, '[L]SP [R]ename')
+  nmap('<leader>la', vim.lsp.buf.code_action, '[L]SP Code [A]ction')
 
   nmap('gd', vim.lsp.buf.definition, '[G]oto [D]efinition')
   nmap('gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
@@ -502,7 +506,7 @@ end
 --  Add any additional override configuration in the following tables. They will be passed to
 --  the `settings` field of the server config. You must look up that documentation yourself.
 local servers = {
-  -- clangd = {},
+  clangd = {},
   -- gopls = {},
   -- pyright = {},
   -- rust_analyzer = {},
