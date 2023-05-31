@@ -269,7 +269,8 @@ vim.o.mouse = 'a'
 -- Sync clipboard between OS and Neovim.
 --  Remove this option if you want your OS clipboard to remain independent.
 --  See `:help 'clipboard'`
-vim.opt.clipboard:append('unnamedplus')
+-- vim.opt.clipboard:append('unnamedplus')
+vim.opt.clipboard = 'unnamedplus'
 
 -- Enable break indent
 vim.o.breakindent = true
@@ -365,7 +366,7 @@ require('telescope').setup {
       previewer = true,
       layout_config = {
         height = 0.5,
-        prompt_position = 'top'
+        prompt_position = 'bottom'
       }
     }
   }
@@ -383,6 +384,20 @@ vim.keymap.set('n', '<leader>fo', tscope.oldfiles, { desc = 'Telescope [F]ind re
 vim.keymap.set('n', '<leader>ff', tscope.find_files, { desc = '[F]ind [F]iles in cwd'})
 vim.keymap.set('n', '<leader>fl', tscope.live_grep, { desc = '[F]ind [L]ive grep search term in workspace' })
 vim.keymap.set('n', '<leader>/', tscope.current_buffer_fuzzy_find, { desc = '[/] fuzzy find in current buffer'})
+
+-- [[ Configure NvimTree ]]
+require("nvim-tree").setup {
+  disable_netrw = true,
+  view = {
+    width = 80,
+  },
+  actions = {
+    open_file = {
+      quit_on_open = true
+    }
+  }
+}
+vim.keymap.set('n', '<leader>e', require('nvim-tree.api').tree.toggle, {desc = "open file tr[e]e"})
 
 -- [[ Configure Treesitter ]]
 -- See `:help nvim-treesitter`
