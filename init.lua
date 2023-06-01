@@ -1,4 +1,4 @@
--- [[
+--[[
 -- this is best practice for a block comment
 -- first init action is to set the global and local leaders
 -- ]]
@@ -104,19 +104,33 @@ require('lazy').setup({
       signs = {
         add = { text = '+' },
         change = { text = '~' },
-        delete = { text = '_' },
-        topdelete = { text = '‾' },
+        delete = { text = '-' },
+        topdelete = { text = '-' },
         changedelete = { text = '~' },
       },
       on_attach = function(bufnr)
-        vim.keymap.set('n', '[c', require('gitsigns').prev_hunk, { buffer = bufnr, desc = 'Go to Previous Hunk' })
-        vim.keymap.set('n', ']c', require('gitsigns').next_hunk, { buffer = bufnr, desc = 'Go to Next Hunk' })
-        vim.keymap.set('n', '<leader>ph', require('gitsigns').preview_hunk, { buffer = bufnr, desc = '[P]review [H]unk' })
+        vim.keymap.set('n', '<leader>gp', require('gitsigns').prev_hunk, { buffer = bufnr, desc = '[G]it show [P]revious Hunk' })
+        vim.keymap.set('n', '<leader>gn', require('gitsigns').next_hunk, { buffer = bufnr, desc = '[G]it show [N]ext Hunk' })
+        vim.keymap.set('n', '<leader>gh', require('gitsigns').preview_hunk, { buffer = bufnr, desc = '[G]it show [H]unk' })
       end,
     },
   },
 
   -- color schemes and pretty things ----------------------------
+  {
+    -- add indentation guides even on blank lines
+    'lukas-reineke/indent-blankline.nvim',
+    -- enable `lukas-reineke/indent-blankline.nvim`
+    -- see `:help indent_blankline.txt`
+     opts = {
+       char = '┊', -- try '|' as well or other vertical bars like from !tree
+       show_trailing_blankline_indent = false,
+       show_first_indent_level = false,
+       use_treesitter = true,
+       show_current_context = true,
+    },
+  },
+
   {
     'navarasu/onedark.nvim',
     opts = {
@@ -129,10 +143,16 @@ require('lazy').setup({
   --     italic_comments = false,
   --   }
   -- },
-  'morhetz/gruvbox',
+  {'morhetz/gruvbox',
+    lazy = false,
+    priority = 1000,
+    config = function()
+      vim.cmd("colorscheme gruvbox")
+    end,
+  },
+  {"NTBBloodbath/doom-one.nvim"},
   'nordtheme/vim',
-  {
-    'mofiqul/vscode.nvim',
+  {'mofiqul/vscode.nvim',
     opts = {
       italic_comments = false,
     }
@@ -150,23 +170,14 @@ require('lazy').setup({
     },
   },
 
-  {
-    -- add indentation guides even on blank lines
-    'lukas-reineke/indent-blankline.nvim',
-    -- enable `lukas-reineke/indent-blankline.nvim`
-    -- see `:help indent_blankline.txt`
-     opts = {
-       char = '┊', -- try '|' as well or other vertical bars like from !tree
-       show_trailing_blankline_indent = false,
-       show_first_indent_level = false,
-       use_treesitter = true,
-       show_current_context = true,
-    },
-  },
-
   -- to comment visual regions/lines
   { 'numtostr/comment.nvim',
     opts = {
+      padding = false,
+      toggler = {
+        line = '<leader>cl',
+        block = '<leader>cb',
+      },
       -- LHS of operator-pending mappings in NORMAL and VISUAL mode
       opleader = {
         -- Line-comment keymap
@@ -177,9 +188,26 @@ require('lazy').setup({
     }
   },
 
-  { 'nvim-tree/nvim-tree.lua',
+  {'nvim-tree/nvim-tree.lua',
     dependencies = { 'nvim-tree/nvim-web-devicons' },
-    opts = {}
+    lazy = true,
+    keys = {
+      { '<leader>e', function() require('nvim-tree.api').tree.toggle() end, desc = "open file tr[e]e" },
+      { '<leader>tr', function() require('nvim-tree.api').tree.toggle({find_file=true,focus=true}) end, desc = "nvim-[t]ree [r]eveal file" }
+    },
+    config = function()
+      require('nvim-tree').setup({
+        disable_netrw = true,
+        view = {
+          width = 80,
+        },
+        actions = {
+          open_file = {
+            quit_on_open = true
+          }
+        },
+      })
+    end
   },
 
   -- fuzzy finder (files, lsp, etc)
@@ -204,7 +232,7 @@ require('lazy').setup({
     dependencies = {
       'nvim-treesitter/nvim-treesitter-textobjects',
     },
-    build = ':tsupdate',
+    build = ':TSupdate',
   },
 
   -- note: next step on your neovim journey: add/configure additional "plugins" for kickstart
@@ -225,9 +253,14 @@ require('lazy').setup({
 -- [[ setting options ]]
 -- see `:help vim.o`
 -- note: you can change these options as you wish!
-
 -- first, set color scheme because color is the most important lol
-vim.cmd.colorscheme('gruvbox') -- ("vscode")
+-- vim.o.background = "dark" -- or "light" for light mode
+vim.g.gruvbox_invert_selection = 0
+vim.g.gruvbox_invert_signs = 0
+vim.g.gruvbox_contrast_dark = "medium" -- or "hard"
+-- [[ for all gruvbox options, see https://github.com/morhetz/gruvbox/wiki/Configuration#options ]]
+vim.cmd.colorscheme("gruvbox") -- ("vscode")
+
 -- default tablstop and shiftwidth to 4
 vim.opt.tabstop = 4
 vim.opt.shiftwidth = 4
@@ -310,6 +343,8 @@ vim.keymap.set({ 'n', 'v' }, '<Space>', '<Nop>', { silent = true })
 vim.keymap.set('n', 'k', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
 vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
 
+-- keymap for NvimTree toggle
+ -- vim.keymap.set('n', '<leader>e', function() require('nvim-tree.api').tree.toggle() end, {desc = "open file tr[e]e"})
 -- [[ Highlight on yank ]]
 -- See `:help vim.highlight.on_yank()`
 local highlight_group = vim.api.nvim_create_augroup('YankHighlight', { clear = true })
@@ -382,26 +417,13 @@ pcall(require('telescope').load_extension, 'fzf')
 -- Telescope keymaps
 local tscope = require('telescope.builtin')
 vim.keymap.set('n', '<leader><space>', tscope.buffers, { desc = 'List currently open buffers' })
-vim.keymap.set('n', '<leader>th', tscope.colorscheme, { desc = 'Select color scheme with preview'})
-vim.keymap.set('n', '<leader>fo', tscope.oldfiles, { desc = 'Telescope [F]ind recently [O]pen files'})
+vim.keymap.set('n', '<leader>th', tscope.colorscheme, { desc = 'Select [th]eme with preview'})
+vim.keymap.set('n', '<leader>fo', tscope.oldfiles, { desc = 'Telescope [f]ind recently [o]pen files'})
 -- vim.keymap.set('n', '<leader>fg', tscope.git_files, { desc = 'Search [F]iles tracked by [G]it' })
-vim.keymap.set('n', '<leader>ff', tscope.find_files, { desc = '[F]ind [F]iles in cwd'})
-vim.keymap.set('n', '<leader>fl', tscope.live_grep, { desc = '[F]ind [L]ive grep search term in workspace' })
+vim.keymap.set('n', '<leader>ff', tscope.find_files, { desc = 'Telescope [f]ind [f]iles in cwd'})
+vim.keymap.set('n', '<leader>fl', tscope.live_grep, { desc = 'Telesecope [f]ind [l]ive grep search term in workspace' })
 vim.keymap.set('n', '<leader>/', tscope.current_buffer_fuzzy_find, { desc = '[/] fuzzy find in current buffer'})
 
--- [[ Configure NvimTree ]]
-require("nvim-tree").setup {
-  disable_netrw = true,
-  view = {
-    width = 80,
-  },
-  actions = {
-    open_file = {
-      quit_on_open = true
-    }
-  }
-}
-vim.keymap.set('n', '<leader>e', require('nvim-tree.api').tree.toggle, {desc = "open file tr[e]e"})
 
 -- [[ Configure Treesitter ]]
 -- See `:help nvim-treesitter`
@@ -491,15 +513,15 @@ local on_attach = function(_, bufnr)
     vim.keymap.set('n', keys, func, { buffer = bufnr, desc = desc })
   end
 
-  nmap('<leader>lr', vim.lsp.buf.rename, '[L]SP [R]ename')
-  nmap('<leader>la', vim.lsp.buf.code_action, '[L]SP Code [A]ction')
+  nmap('<leader>lr', vim.lsp.buf.rename, '[l]SP [R]ename')
+  nmap('<leader>la', vim.lsp.buf.code_action, '[l]SP Code [A]ction')
 
-  nmap('gd', vim.lsp.buf.definition, '[G]oto [D]efinition')
-  nmap('gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
-  nmap('gI', vim.lsp.buf.implementation, '[G]oto [I]mplementation')
-  nmap('<leader>D', vim.lsp.buf.type_definition, 'Type [D]efinition')
-  nmap('<leader>ds', require('telescope.builtin').lsp_document_symbols, '[D]ocument [S]ymbols')
-  nmap('<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[W]orkspace [S]ymbols')
+  nmap('gd', vim.lsp.buf.definition, '[g]oto [D]efinition')
+  nmap('gr', require('telescope.builtin').lsp_references, '[g]oto [R]eferences')
+  nmap('gI', vim.lsp.buf.implementation, '[g]oto [I]mplementation')
+  nmap('<leader>ld', vim.lsp.buf.type_definition, '[l]sp type [d]efinition')
+  nmap('<leader>ls', require('telescope.builtin').lsp_document_symbols, '[l]SP list [s]ymbols in document')
+  -- nmap('<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[W]orkspace [S]ymbols')
 
   -- See `:help K` for why this keymap
   nmap('K', vim.lsp.buf.hover, 'Hover Documentation')
