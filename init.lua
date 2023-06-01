@@ -117,20 +117,20 @@ require('lazy').setup({
   },
 
   -- color schemes and pretty things ----------------------------
-  -- {
-  --   'navarasu/onedark.nvim',
-  --   opts = {
-  --     italic_comments = false,
-  --   }
-  -- },
+  {
+    'navarasu/onedark.nvim',
+    opts = {
+      italic_comments = false,
+    }
+  },
   -- {
   --   'folke/tokyonight.nvim',
   --   opts = {
   --     italic_comments = false,
   --   }
   -- },
-  {'morhetz/gruvbox'},
-
+  'morhetz/gruvbox',
+  'nordtheme/vim',
   {
     'mofiqul/vscode.nvim',
     opts = {
@@ -144,7 +144,7 @@ require('lazy').setup({
     opts = {
       options = {
         disabled_filetypes = {
-          statusline = {'nvimtree'}
+          statusline = {'NvimTree'}
         }
       },
     },
@@ -295,6 +295,10 @@ vim.o.completeopt = 'menuone,noselect'
 
 -- NOTE: You should make sure your terminal supports this
 vim.o.termguicolors = true
+
+-- always open split windows to the right or below
+vim.opt.splitbelow = true
+vim.opt.splitright = true
 
 -- [[ Basic Keymaps ]]
 
