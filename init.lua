@@ -182,6 +182,9 @@ require('lazy').setup({
       })
     end,
   },
+  {'sonph/onehalf'},
+  {'jacoborus/tender.vim'},
+  { "EdenEast/nightfox.nvim" },
 
   {
     -- set lualine as statusline
@@ -283,9 +286,7 @@ require('lazy').setup({
 vim.g.gruvbox_invert_selection = 0
 vim.g.gruvbox_invert_signs = 0
 vim.g.gruvbox_contrast_dark = "medium" -- or "hard"
-vim.g.doom_one_cursor_coloring = true
--- [[ for all gruvbox options, see https://github.com/morhetz/gruvbox/wiki/Configuration#options ]]
-vim.cmd.colorscheme("kanagawa") -- "gruvbox" "vscode" "nord" all good shit
+vim.cmd.colorscheme("vscode") -- i can never decide lol
 
 -- default tablstop and shiftwidth to 4
 vim.opt.tabstop = 4
