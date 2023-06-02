@@ -26,7 +26,6 @@ if not vim.loop.fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
-
 -- Here is where you install your plugins.
 -- There are a few ways that you can configure a plugin.
 --
@@ -94,7 +93,17 @@ require('lazy').setup({
   },
 
   -- Useful plugin to show you pending keybinds.
-  { 'folke/which-key.nvim', opts = {} },
+  { 'folke/which-key.nvim',
+    opts = {
+      key_labels = {
+        -- override the label used to display some keys. It doesn't effect WK in any other way.
+        -- For example:
+        -- ["<space>"] = "SPC",
+        -- ["<cr>"] = "RET",
+        -- ["<tab>"] = "TAB",
+      },
+    }
+  },
 
   -- GitSigns adds git stuff to the gutter
   {
@@ -116,12 +125,9 @@ require('lazy').setup({
     },
   },
 
-  -- color schemes and pretty things ----------------------------
+  -- pretty things and color schemes ----------------------------
   {
-    -- add indentation guides even on blank lines
     'lukas-reineke/indent-blankline.nvim',
-    -- enable `lukas-reineke/indent-blankline.nvim`
-    -- see `:help indent_blankline.txt`
      opts = {
        char = '┊', -- try '|' as well or other vertical bars like from !tree
        show_trailing_blankline_indent = false,
@@ -131,12 +137,11 @@ require('lazy').setup({
     },
   },
 
-  {
-    'navarasu/onedark.nvim',
-    opts = {
-      italic_comments = false,
-    }
-  },
+  --{'navarasu/onedark.nvim',
+  --  opts = {
+  --    italic_comments = false,
+  --  }
+  --},
   -- {
   --   'folke/tokyonight.nvim',
   --   opts = {
@@ -145,17 +150,37 @@ require('lazy').setup({
   -- },
   {'morhetz/gruvbox',
     lazy = false,
-    priority = 1000,
-    config = function()
-      vim.cmd("colorscheme gruvbox")
-    end,
   },
-  {"NTBBloodbath/doom-one.nvim"},
-  'nordtheme/vim',
+  {'nordtheme/vim',
+    lazy = false
+  },
   {'mofiqul/vscode.nvim',
+    lazy = false,
     opts = {
       italic_comments = false,
+      disable_nvim_tree = false,
     }
+  },
+  {"rebelot/kanagawa.nvim",
+    opts = {
+      commentStyle = { italic = false },
+      keywordStyle = { italic = false },
+      transparent = false,
+      dimInactive = true,
+    }
+  },
+  {"neanias/everforest-nvim",
+    config = function()
+      require("everforest").setup({
+        -- Controls the "hardness" of the background. Options are "soft", "medium" or "hard".
+        -- Default is "medium".
+        background = "hard",
+        -- Whether italics should be used for keywords, builtin types and more.
+        italics = false,
+        -- Disable italic fonts for comments. Default is false
+        disable_italic_comments = true,
+      })
+    end,
   },
 
   {
@@ -258,8 +283,9 @@ require('lazy').setup({
 vim.g.gruvbox_invert_selection = 0
 vim.g.gruvbox_invert_signs = 0
 vim.g.gruvbox_contrast_dark = "medium" -- or "hard"
+vim.g.doom_one_cursor_coloring = true
 -- [[ for all gruvbox options, see https://github.com/morhetz/gruvbox/wiki/Configuration#options ]]
-vim.cmd.colorscheme("gruvbox") -- ("vscode")
+vim.cmd.colorscheme("kanagawa") -- "gruvbox" "vscode" "nord" all good shit
 
 -- default tablstop and shiftwidth to 4
 vim.opt.tabstop = 4
@@ -280,7 +306,7 @@ vim.opt.wrap = true
 vim.opt.scrolloff = 8
 -- show the cursor's line and column
 vim.opt.cursorline = true
-vim.opt.cursorcolumn = true
+vim.opt.cursorcolumn = false
 -- update the 'grep program' to use the rg
 vim.opt.grepprg = 'rg --vimgrep --follow'
 -- error format for ?
@@ -319,9 +345,9 @@ vim.o.smartcase = true
 vim.wo.signcolumn = 'yes'
 
 -- Decrease update time
-vim.o.updatetime = 250 -- 100? 150? 
+vim.o.updatetime = 100 -- 100? 150? 
 vim.o.timeout = true
-vim.o.timeoutlen = 300
+vim.o.timeoutlen = 250  -- used for the delay before WhichKey shows up
 
 -- Set completeopt to have a better completion experience
 vim.o.completeopt = 'menuone,noselect'
@@ -360,6 +386,8 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 -- See `:help telescope` and `:help telescope.setup()`
 require('telescope').setup {
   defaults = {
+    sorting_strategy = "ascending",
+    prompt_prefix = "   ",
     mappings = {
       i = {
         ['<C-u>'] = false,
@@ -401,11 +429,10 @@ require('telescope').setup {
       },
     },
     current_buffer_fuzzy_find = {
-      layout_strategy = 'bottom_pane',
+      layout_strategy = 'horizontal',
       previewer = true,
       layout_config = {
-        height = 0.5,
-        prompt_position = 'bottom'
+        anchor = 'N',
       }
     }
   }
@@ -414,15 +441,56 @@ require('telescope').setup {
 -- Enable telescope fzf native, if installed
 pcall(require('telescope').load_extension, 'fzf')
 
--- Telescope keymaps
+-- [[ Telescope keymaps ]]
 local tscope = require('telescope.builtin')
 vim.keymap.set('n', '<leader><space>', tscope.buffers, { desc = 'List currently open buffers' })
 vim.keymap.set('n', '<leader>th', tscope.colorscheme, { desc = 'Select [th]eme with preview'})
-vim.keymap.set('n', '<leader>fo', tscope.oldfiles, { desc = 'Telescope [f]ind recently [o]pen files'})
+vim.keymap.set('n', '<leader>fo', tscope.oldfiles, { desc = 'find recently [o]pen files'})
 -- vim.keymap.set('n', '<leader>fg', tscope.git_files, { desc = 'Search [F]iles tracked by [G]it' })
-vim.keymap.set('n', '<leader>ff', tscope.find_files, { desc = 'Telescope [f]ind [f]iles in cwd'})
-vim.keymap.set('n', '<leader>fl', tscope.live_grep, { desc = 'Telesecope [f]ind [l]ive grep search term in workspace' })
-vim.keymap.set('n', '<leader>/', tscope.current_buffer_fuzzy_find, { desc = '[/] fuzzy find in current buffer'})
+vim.keymap.set('n', '<leader>ff', tscope.find_files, { desc = 'find [f]iles in cwd'})
+vim.keymap.set('n', '<leader>fl', tscope.live_grep, { desc = 'find [l]ive grep search term in workspace'})
+vim.keymap.set('n', '<leader>f/', tscope.current_buffer_fuzzy_find, { desc = 'fuzzy find in [/] current buffer'})
+
+-- [[ Configure WhichKey ]]
+local wk = require('which-key')
+--local wkopts = {
+--  -- table of keymap groups
+--  {f, 'find'},
+--  {c, 'comment'},
+--  {g, 'git'},
+--  {t, 'other'},
+--  {l, 'lsp'}
+--}
+
+wk.register({
+  f = {
+    name = "find"
+  }
+}, { prefix = "<leader>"})
+
+wk.register({
+  c = {
+    name = "comment"
+  }
+}, {prefix = "<leader>"})
+
+wk.register({
+  l = {
+    name = "lsp"
+  }
+}, {prefix = "<leader>"})
+
+wk.register({
+  g = {
+    name = "git"
+  }
+}, { prefix = "<leader>"})
+
+wk.register({
+  g = {
+    name = "goto"
+  }
+}, { prefix = ""})
 
 
 -- [[ Configure Treesitter ]]
@@ -513,14 +581,14 @@ local on_attach = function(_, bufnr)
     vim.keymap.set('n', keys, func, { buffer = bufnr, desc = desc })
   end
 
-  nmap('<leader>lr', vim.lsp.buf.rename, '[l]SP [R]ename')
-  nmap('<leader>la', vim.lsp.buf.code_action, '[l]SP Code [A]ction')
+  nmap('<leader>lr', vim.lsp.buf.rename, 'LSP [R]ename')
+  nmap('<leader>la', vim.lsp.buf.code_action, 'LSP Code [A]ction')
 
-  nmap('gd', vim.lsp.buf.definition, '[g]oto [D]efinition')
-  nmap('gr', require('telescope.builtin').lsp_references, '[g]oto [R]eferences')
-  nmap('gI', vim.lsp.buf.implementation, '[g]oto [I]mplementation')
-  nmap('<leader>ld', vim.lsp.buf.type_definition, '[l]sp type [d]efinition')
-  nmap('<leader>ls', require('telescope.builtin').lsp_document_symbols, '[l]SP list [s]ymbols in document')
+  nmap('gd', vim.lsp.buf.definition, 'goto [D]efinition')
+  nmap('gr', require('telescope.builtin').lsp_references, 'goto [r]eferences')
+  nmap('gI', vim.lsp.buf.implementation, 'goto [I]mplementation')
+  nmap('<leader>ld', vim.lsp.buf.type_definition, 'LSP type [d]efinition')
+  nmap('<leader>ls', require('telescope.builtin').lsp_document_symbols, 'LSP list [s]ymbols in document')
   -- nmap('<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[W]orkspace [S]ymbols')
 
   -- See `:help K` for why this keymap
@@ -528,12 +596,12 @@ local on_attach = function(_, bufnr)
   nmap('<C-k>', vim.lsp.buf.signature_help, 'Signature Documentation')
 
   -- Lesser used LSP functionality
-  nmap('gD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
-  nmap('<leader>wa', vim.lsp.buf.add_workspace_folder, '[W]orkspace [A]dd Folder')
-  nmap('<leader>wr', vim.lsp.buf.remove_workspace_folder, '[W]orkspace [R]emove Folder')
-  nmap('<leader>wl', function()
-    print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
-  end, '[W]orkspace [L]ist Folders')
+  nmap('gD', vim.lsp.buf.declaration, 'goto [D]eclaration')
+  --nmap('<leader>wa', vim.lsp.buf.add_workspace_folder, '[W]orkspace [A]dd Folder')
+  --nmap('<leader>wr', vim.lsp.buf.remove_workspace_folder, '[W]orkspace [R]emove Folder')
+  --nmap('<leader>wl', function()
+  --  print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
+  --end, '[W]orkspace [L]ist Folders')
 
   -- Create a command `:Format` local to the LSP buffer
   vim.api.nvim_buf_create_user_command(bufnr, 'Format', function(_)
@@ -603,10 +671,11 @@ cmp.setup {
     ['<C-p>'] = cmp.mapping.select_prev_item(),
     ['<C-d>'] = cmp.mapping.scroll_docs(-4),
     ['<C-f>'] = cmp.mapping.scroll_docs(4),
-    ['<C-Space>'] = cmp.mapping.complete {},
+    --['<C-Space>'] = cmp.mapping.complete {},
+    ['<C-Space>'] = cmp.mapping.abort(),
     ['<CR>'] = cmp.mapping.confirm {
       behavior = cmp.ConfirmBehavior.Replace,
-      select = true,
+      select = false,
     },
     ['<Tab>'] = cmp.mapping(function(fallback)
       if cmp.visible() then
