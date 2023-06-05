@@ -18,7 +18,7 @@ local options = {
     showmode = false,
     showtabline = 4,
     signcolumn = 'yes',
-    smartcase = tue,
+    smartcase = true,
     splitbelow = true,
     splitright = true,
     swapfile = false,
@@ -31,7 +31,9 @@ local options = {
     ttimeoutlen = 250, -- no idea here
     undofile = true, -- enable persistent undo
     updatetime = 100, -- (ms) faster completion, 400ms default
+    clipboard = 'unnamedplus',
     wrap = true,
+    wildignorecase = true
 }
 
 for k, v in pairs(options) do
@@ -43,13 +45,10 @@ vim.opt.whichwrap:append "<>hl[]" -- go to prev/next line with movement keys
 vim.opt.path:remove "/usr/include" -- better search
 vim.opt.path:append "**" -- better search
 
-vim.opt.errorformat:append('%f:%l:%c%p%m'),
+vim.opt.errorformat:append('%f:%l:%c%p%m')
 
-vim.opt.clipboard:append('unnamedplus'),
+vim.opt.listchars:append({space = '·'})
 
-vim.opt.listchars:append({space = '·'}),
-
-vim.opt.wildignorecase = true
 vim.opt.wildignore:append "**/.git/*"
 
 -- i don't know where to put these yet

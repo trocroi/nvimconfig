@@ -1,4 +1,4 @@
---[[
+--[
 -- this is best practice for a block comment
 -- first init action is to set the global and local leaders
 -- ]]
@@ -51,7 +51,10 @@ require('lazy').setup({
   'tpope/vim-fugitive',
   'tpope/vim-rhubarb',
   'tpope/vim-surround',
+  'tpope/vim-repeat',
   'jremmen/vim-ripgrep',
+  -- movement -----------------------------------
+  {'ggandor/leap.nvim'},
   -- Detect tabstop and shiftwidth automatically
   'tpope/vim-sleuth',
   -- autopairs braces etc
@@ -75,7 +78,7 @@ require('lazy').setup({
       'folke/neodev.nvim',
     },
   },
-  --
+
   {
     -- Autocompletion
     'hrsh7th/nvim-cmp',
@@ -125,7 +128,7 @@ require('lazy').setup({
     },
   },
 
-  -- pretty things and color schemes ----------------------------
+  -- pretty things ----------------------------
   {
     'lukas-reineke/indent-blankline.nvim',
      opts = {
@@ -136,55 +139,6 @@ require('lazy').setup({
        show_current_context = true,
     },
   },
-
-  --{'navarasu/onedark.nvim',
-  --  opts = {
-  --    italic_comments = false,
-  --  }
-  --},
-  -- {
-  --   'folke/tokyonight.nvim',
-  --   opts = {
-  --     italic_comments = false,
-  --   }
-  -- },
-  {'morhetz/gruvbox',
-    lazy = false,
-  },
-  {'nordtheme/vim',
-    lazy = false
-  },
-  {'mofiqul/vscode.nvim',
-    lazy = false,
-    opts = {
-      italic_comments = false,
-      disable_nvim_tree = false,
-    }
-  },
-  {"rebelot/kanagawa.nvim",
-    opts = {
-      commentStyle = { italic = false },
-      keywordStyle = { italic = false },
-      transparent = false,
-      dimInactive = true,
-    }
-  },
-  {"neanias/everforest-nvim",
-    config = function()
-      require("everforest").setup({
-        -- Controls the "hardness" of the background. Options are "soft", "medium" or "hard".
-        -- Default is "medium".
-        background = "hard",
-        -- Whether italics should be used for keywords, builtin types and more.
-        italics = false,
-        -- Disable italic fonts for comments. Default is false
-        disable_italic_comments = true,
-      })
-    end,
-  },
-  {'sonph/onehalf'},
-  {'jacoborus/tender.vim'},
-  { "EdenEast/nightfox.nvim" },
 
   {
     -- set lualine as statusline
@@ -198,7 +152,29 @@ require('lazy').setup({
     },
   },
 
-  -- to comment visual regions/lines
+  -- color schemes ----------------------------
+  {'navarasu/onedark.nvim', lazy = false, opts = { italic_comments = false } },
+  {'folke/tokyonight.nvim', lazy = false, opts = { comments = { italic = true }, keywords = { italic = true }, }, },
+  {'morhetz/gruvbox', lazy = false },
+  {'nordtheme/vim', lazy = false },
+  {'mofiqul/vscode.nvim', lazy = false, opts = { italic_comments = false, disable_nvim_tree = false, } },
+  {"rebelot/kanagawa.nvim", opts = { commentStyle = { italic = false }, keywordStyle = { italic = false }, transparent = false, dimInactive = true, } },
+  {"neanias/everforest-nvim",
+    config = function()
+      require("everforest").setup({
+        background = "hard",
+        italics = false,
+        disable_italic_comments = true,
+      })
+    end,
+  },
+  {'sonph/onehalf', lazy = false, },
+  {'jacoborus/tender.vim', lazy = false },
+  { "EdenEast/nightfox.nvim", lazy = false },
+  { 'rose-pine/neovim', name = 'rose-pine', lazy = false, opts={ disable_italics = true } },
+
+  -- small utils --------------------------------
+    -- to comment visual regions/lines
   { 'numtostr/comment.nvim',
     opts = {
       padding = false,
@@ -228,6 +204,8 @@ require('lazy').setup({
         disable_netrw = true,
         view = {
           width = 80,
+          number = true,
+          relativenumber = true,
         },
         actions = {
           open_file = {
@@ -260,7 +238,7 @@ require('lazy').setup({
     dependencies = {
       'nvim-treesitter/nvim-treesitter-textobjects',
     },
-    build = ':TSupdate',
+    build = ':TSUpdate',
   },
 
   -- note: next step on your neovim journey: add/configure additional "plugins" for kickstart
@@ -322,6 +300,7 @@ vim.api.nvim_set_keymap('n', '<esc>', ":noh<return><esc>", { noremap = true, sil
 
 -- Show line numbers default
 vim.wo.number = true
+vim.wo.relativenumber = true
 
 -- Enable mouse mode
 vim.o.mouse = 'a'
@@ -370,17 +349,27 @@ vim.keymap.set({ 'n', 'v' }, '<Space>', '<Nop>', { silent = true })
 vim.keymap.set('n', 'k', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
 vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
 
+vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv")
+vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv")
+vim.keymap.set("n", "Q", "<nop>")
+
+-- [[ call stuff that needs "require" to get setup etc ]]
+require('leap').add_default_mappings()
+
 -- keymap for NvimTree toggle
  -- vim.keymap.set('n', '<leader>e', function() require('nvim-tree.api').tree.toggle() end, {desc = "open file tr[e]e"})
 -- [[ Highlight on yank ]]
 -- See `:help vim.highlight.on_yank()`
 local highlight_group = vim.api.nvim_create_augroup('YankHighlight', { clear = true })
 vim.api.nvim_create_autocmd('TextYankPost', {
-  callback = function()
-    vim.highlight.on_yank()
-  end,
   group = highlight_group,
   pattern = '*',
+  callback = function()
+    vim.highlight.on_yank({
+      higroup = "IncSearch",
+      timeout = 100
+    })
+  end,
 })
 
 -- [[ Configure Telescope ]]
@@ -450,7 +439,7 @@ vim.keymap.set('n', '<leader>fo', tscope.oldfiles, { desc = 'find recently [o]pe
 -- vim.keymap.set('n', '<leader>fg', tscope.git_files, { desc = 'Search [F]iles tracked by [G]it' })
 vim.keymap.set('n', '<leader>ff', tscope.find_files, { desc = 'find [f]iles in cwd'})
 vim.keymap.set('n', '<leader>fl', tscope.live_grep, { desc = 'find [l]ive grep search term in workspace'})
-vim.keymap.set('n', '<leader>f/', tscope.current_buffer_fuzzy_find, { desc = 'fuzzy find in [/] current buffer'})
+vim.keymap.set('n', '<leader>/', tscope.current_buffer_fuzzy_find, { desc = 'fuzzy find in [/] current buffer'})
 
 -- [[ Configure WhichKey ]]
 local wk = require('which-key')
