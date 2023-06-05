@@ -265,7 +265,7 @@ require('lazy').setup({
 vim.g.gruvbox_invert_selection = 0
 vim.g.gruvbox_invert_signs = 0
 vim.g.gruvbox_contrast_dark = "medium" -- or "hard"
-vim.cmd.colorscheme("vscode") -- i can never decide lol
+vim.cmd.colorscheme("retrobox") -- i can never decide lol
 
 -- default tablstop and shiftwidth to 4
 vim.opt.tabstop = 4
@@ -342,7 +342,7 @@ vim.o.termguicolors = true
 -- always open split windows to the right or below
 vim.opt.splitbelow = true
 vim.opt.splitright = true
-
+vim.opt.equalalways = true
 -- [[ Basic Keymaps ]]
 
 -- Keymaps for better default experience
