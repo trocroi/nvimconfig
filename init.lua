@@ -54,7 +54,8 @@ require('lazy').setup({
   'tpope/vim-repeat',
   'jremmen/vim-ripgrep',
   -- movement -----------------------------------
-  {'ggandor/leap.nvim'},
+  --{'ggandor/leap.nvim'},
+  {"justinmk/vim-sneak"},
   -- Detect tabstop and shiftwidth automatically
   'tpope/vim-sleuth',
   -- autopairs braces etc
@@ -315,7 +316,10 @@ vim.opt.clipboard = 'unnamedplus'
 vim.o.breakindent = true
 
 -- Save undo history
-vim.o.undofile = true
+vim.opt.swapfile = false
+vim.opt.backup = false
+vim.opt.undodir = os.getenv("HOME") .. "/.vim/undodir"
+vim.opt.undofile = true
 
 -- Case insensitive searching UNLESS /C or capital in search
 vim.o.ignorecase = true
@@ -353,8 +357,10 @@ vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv")
 vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv")
 vim.keymap.set("n", "Q", "<nop>")
 
+vim.keymap.set("n", "f", "<Plug>Sneak_s", {desc = "sneak forward"})
+vim.keymap.set("n", "F", "<Plug>Sneak_S", {desc = "sneak backward"})
 -- [[ call stuff that needs "require" to get setup etc ]]
-require('leap').add_default_mappings()
+--require('leap').add_default_mappings()
 
 -- keymap for NvimTree toggle
  -- vim.keymap.set('n', '<leader>e', function() require('nvim-tree.api').tree.toggle() end, {desc = "open file tr[e]e"})
@@ -480,7 +486,7 @@ wk.register({
   g = {
     name = "goto"
   }
-}, { prefix = ""})
+}, { prefix = ""}) -- note no leader on the prefix
 
 
 -- [[ Configure Treesitter ]]
