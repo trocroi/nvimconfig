@@ -154,8 +154,14 @@ require('lazy').setup({
   },
 
   -- color schemes ----------------------------
-  {'navarasu/onedark.nvim', lazy = false, opts = { italic_comments = false } },
-  {'folke/tokyonight.nvim', lazy = false, opts = { comments = { italic = true }, keywords = { italic = true }, }, },
+  {'navarasu/onedark.nvim', lazy = false, opts = { code_style = {
+        comments = 'none',
+        keywords = 'none',
+        functions = 'none',
+        strings = 'none',
+        variables = 'none'
+  } } },
+  {'folke/tokyonight.nvim', lazy = false, opts = { comments = { italic = false }, keywords = { italic = false }, }, },
   {'morhetz/gruvbox', lazy = false },
   {'nordtheme/vim', lazy = false },
   {'mofiqul/vscode.nvim', lazy = false, opts = { italic_comments = false, disable_nvim_tree = false, } },
@@ -171,7 +177,15 @@ require('lazy').setup({
   },
   {'sonph/onehalf', lazy = false, },
   {'jacoborus/tender.vim', lazy = false },
-  { "EdenEast/nightfox.nvim", lazy = false },
+  { "EdenEast/nightfox.nvim", lazy = false,
+    priority = 1000,
+    opts = {
+      dim_inactive = true,
+      styles = {
+        comments = "none"
+      }
+    }
+  },
   { 'rose-pine/neovim', name = 'rose-pine', lazy = false, opts={ disable_italics = true } },
 
   -- small utils --------------------------------
@@ -265,7 +279,8 @@ require('lazy').setup({
 vim.g.gruvbox_invert_selection = 0
 vim.g.gruvbox_invert_signs = 0
 vim.g.gruvbox_contrast_dark = "medium" -- or "hard"
-vim.cmd.colorscheme("retrobox") -- i can never decide lol
+vim.cmd.colorscheme("vscode") -- i can never decide lol
+-- [[ YES i know this is set twice. for some reason that makes it work lol ]]
 
 -- default tablstop and shiftwidth to 4
 vim.opt.tabstop = 4
@@ -698,5 +713,6 @@ cmp.setup {
   },
 }
 
+vim.cmd.colorscheme("vscode")
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
