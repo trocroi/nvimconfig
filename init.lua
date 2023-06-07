@@ -153,6 +153,9 @@ require('lazy').setup({
     },
   },
 
+  -- need to investigate the minimap plugin. its kinda cool
+  --{'wfxr/minimap.vim', build = ':!cargo install --locked code-minimap'},
+
   -- color schemes ----------------------------
   {'navarasu/onedark.nvim', lazy = false, opts = { code_style = {
         comments = 'none',
