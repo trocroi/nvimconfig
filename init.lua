@@ -303,6 +303,8 @@ vim.opt.expandtab = true
 -- because this is nice
 vim.opt.autoindent = true
 vim.opt.smartindent = true
+vim.opt.cindent = true
+vim.o.smarttab = true
 -- show whitespace as 'middot' char
 vim.opt.listchars:append({ space = '·' })
 vim.opt.list = true
@@ -370,6 +372,11 @@ vim.o.termguicolors = true
 vim.opt.splitbelow = true
 vim.opt.splitright = true
 vim.opt.equalalways = true
+
+vim.opt.showtabline = 2 -- 0 'never' 1 'only if there are at least two tab pages' 2 'always'
+
+
+
 -- [[ Basic Keymaps ]]
 
 -- Keymaps for better default experience
@@ -525,7 +532,7 @@ require('nvim-treesitter.configs').setup {
   auto_install = false,
 
   highlight = { enable = true },
-  indent = { enable = true, disable = { 'python' } },
+  --indent = { enable = true }, -- disabled because it doesn't work as well as cindent does for me
   incremental_selection = {
     enable = true,
     keymaps = {
@@ -680,6 +687,7 @@ mason_lspconfig.setup_handlers {
 -- See `:help cmp`
 local cmp = require 'cmp'
 local luasnip = require 'luasnip'
+local cmp_autopairs = require('nvim-autopairs.completion.cmp')
 require('luasnip.loaders.from_vscode').lazy_load()
 luasnip.config.setup {}
 
@@ -724,6 +732,11 @@ cmp.setup {
     { name = 'luasnip' },
   },
 }
+
+cmp.event:on(
+  'confirm_done',
+  cmp_autopairs.on_confirm_done()
+)
 
 vim.cmd.colorscheme("vscode")
 -- The line beneath this is called `modeline`. See `:help modeline`
