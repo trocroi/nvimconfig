@@ -304,7 +304,7 @@ vim.opt.expandtab = true
 vim.opt.autoindent = true
 vim.opt.smartindent = true
 vim.opt.cindent = true
-vim.o.smarttab = true
+--vim.o.smarttab = true -- not sure this is useful for me right now
 -- show whitespace as 'middot' char
 vim.opt.listchars:append({ space = '·' })
 vim.opt.list = true
