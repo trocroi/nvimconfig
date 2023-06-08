@@ -132,7 +132,7 @@ require('lazy').setup({
       on_attach = function(bufnr)
         vim.keymap.set('n', '<leader>gp', require('gitsigns').prev_hunk, { buffer = bufnr, desc = '[g]it show [p]revious Hunk' })
         vim.keymap.set('n', '<leader>gn', require('gitsigns').next_hunk, { buffer = bufnr, desc = '[g]it show [n]ext Hunk' })
-        vim.keymap.set('n', '<leader>gd', require('gitsigns').preview_hunk, { buffer = bufnr, desc = '[g]it show [d]iff' })
+        vim.keymap.set('n', '<leader>gd', require('gitsigns').preview_hunk_inline, { buffer = bufnr, desc = '[g]it show [d]iff' })
         vim.keymap.set('n', '<leader>gr', require('gitsigns').reset_hunk, {buffer = bufnr, desc = "[g]it [r]eset hunk"})
       end,
     },
