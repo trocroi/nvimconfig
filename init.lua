@@ -373,9 +373,6 @@ vim.opt.splitbelow = true
 vim.opt.splitright = true
 vim.opt.equalalways = true
 
-vim.opt.showtabline = 2 -- 0 'never' 1 'only if there are at least two tab pages' 2 'always'
-
-
 
 -- [[ Basic Keymaps ]]
 
