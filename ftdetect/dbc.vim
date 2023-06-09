@@ -1,1 +1,1 @@
-au BufRead,BufNewFile *.dbc                 setfiletype dbc
+au BufRead,BufNewFile *.dbc                 set filetype=dbc
