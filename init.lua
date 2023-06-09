@@ -309,6 +309,7 @@ vim.opt.cindent = true
 vim.opt.listchars:append({ space = '·' })
 vim.opt.list = true
 vim.opt.syntax = 'on'
+vim.api.nvim_set_var('load_doxygen_syntax', 1)
 -- word wrap for narrow panes/windows/buffers
 vim.opt.wrap = true
 -- the number of lines _below_ the cursor to keep when scrolling to top or bottom of buffer
