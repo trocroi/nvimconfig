@@ -159,6 +159,14 @@ require('lazy').setup({
           statusline = {'NvimTree'}
         }
       },
+      sections = {
+        lualine_c = {
+          {
+            'filename',
+            path = 1
+          }
+        }
+      },
     },
   },
 
