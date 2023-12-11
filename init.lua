@@ -139,14 +139,23 @@ require('lazy').setup({
   },
 
   -- pretty things ----------------------------
-  {
-    'lukas-reineke/indent-blankline.nvim',
-     opts = {
-       char = '┊', -- try '|' as well or other vertical bars like from !tree
-       show_trailing_blankline_indent = false,
-       show_first_indent_level = false,
-       use_treesitter = true,
-       show_current_context = true,
+  {'lukas-reineke/indent-blankline.nvim',
+    main = "ibl",
+    opts = {
+    -- Version 3 uses a setup function which is called down below.
+        indent = {
+          char = '┊',
+        },
+        whitespace = {
+          remove_blankline_trail = false,
+        },
+
+    -- OLD: Version 2
+       --char = '┊', -- try '|' as well or other vertical bars like from !tree
+       --show_trailing_blankline_indent = false,
+       --show_first_indent_level = false,
+       --use_treesitter = true,
+       --show_current_context = true,
     },
   },
 
@@ -745,6 +754,12 @@ cmp.setup {
 cmp.event:on(
   'confirm_done',
   cmp_autopairs.on_confirm_done()
+)
+
+local iblhooks = require("ibl.hooks")
+iblhooks.register(
+  iblhooks.type.WHITESPACE,
+  iblhooks.builtin.hide_first_space_indent_level
 )
 
 vim.cmd.colorscheme("vscode")
